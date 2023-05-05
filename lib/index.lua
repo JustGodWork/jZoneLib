@@ -14,6 +14,7 @@
 --]]
 
 local zones = {};
+local DEBUG = GetConvar('jClassLib_DEBUG', 'false') == 'true';
 
 jZoneLib = {};
 
@@ -40,6 +41,10 @@ function jZoneLib.AddZone(resourceName, zoneId, position, size, job, job_grade, 
 
     };
 
+    if (DEBUG) then
+        console.debug("^7(^3jZoneLib^7) ^0=> Added zone: ^1" .. zoneId .. "^0 from resource: ^1" .. resourceName .. "^0");
+    end
+
 end
 
 ---@param resourceName string
@@ -47,7 +52,13 @@ end
 function jZoneLib.StartZone(resourceName, zoneId)
     if (type(zones[resourceName]) == "table") then
         if (type(zones[resourceName][zoneId]) == "table") then
+
             zones[resourceName][zoneId].state = true;
+
+            if (DEBUG) then
+                console.debug("^7(^3jZoneLib^7) ^0=> Started zone: ^1" .. zoneId .. "^0 from resource: ^1" .. resourceName .. "^0");
+            end
+
         end
     end
 end 
@@ -59,6 +70,11 @@ function jZoneLib.StopZone(resourceName, zoneId)
     if (type(zones[resourceName]) == "table") then
         if (type(zones[resourceName][zoneId]) == "table") then
             zones[resourceName][zoneId].state = false;
+
+            if (DEBUG) then
+                console.debug("^7(^3jZoneLib^7) ^0=> Stopped zone: ^1" .. zoneId .. "^0 from resource: ^1" .. resourceName .. "^0");
+            end
+
         end
     end
 
@@ -75,12 +91,18 @@ end
 function jZoneLib.UpdateZone(resourceName, zoneId, position, size, job, job_grade, job2, job2_grade)
     if (type(zones[resourceName]) == "table") then
         if (type(zones[resourceName][zoneId]) == "table") then
+
             zones[resourceName][zoneId].position = Vector3(position.x, position.y, position.z);
             zones[resourceName][zoneId].size = size;
             zones[resourceName][zoneId].job = job;
             zones[resourceName][zoneId].job_grade = job_grade;
             zones[resourceName][zoneId].job2 = job2;
             zones[resourceName][zoneId].job2_grade = job2_grade;
+
+            if (DEBUG) then
+                console.debug("^7(^3jZoneLib^7) ^0=> Updated zone: ^1" .. zoneId .. "^0 from resource: ^1" .. resourceName .. "^0");
+            end
+
         end
     end
 end
@@ -88,6 +110,11 @@ end
 ---@param resourceName string
 function jZoneLib.Purge(resourceName)
     zones[resourceName] = nil;
+
+    if (DEBUG) then
+        console.debug("^7(^3jZoneLib^7) ^0=> Purged zones from resource: ^1" .. resourceName .. "^0");
+    end
+
 end
 
 ---@return boolean
@@ -142,34 +169,33 @@ CreateThread(function()
 
                         local dist = zone.position:Distance(position);
 
-                        if (not jZoneLib.ESX) then
+                        if (not ENV.ESX) then
 
                             if (zone.state and dist > zone.size) then
-                                TriggerEvent(eEvents.Stop, resourceName, zoneId);
+
+                                TriggerEvent(eEvents.ZoneLib.Stop, resourceName, zoneId);
                                 zone.state = false;
+
                             elseif (not zone.state and dist <= zone.size) then
+
                                 zone.state = true;
-                                TriggerEvent(eEvents.Start, resourceName, zoneId);
+                                TriggerEvent(eEvents.ZoneLib.Start, resourceName, zoneId);
+
                             end
 
                         elseif (ESXReady) then
 
                             local allowed = PlayerAllowed(zone.job, zone.job_grade, zone.job2, zone.job2_grade);
 
-                            if (zone.state and dist > zone.size) then
+                            if (zone.state and (dist > zone.size or not allowed)) then
 
-                                TriggerEvent(eEvents.Stop, resourceName, zoneId);
+                                TriggerEvent(eEvents.ZoneLib.Stop, resourceName, zoneId);
                                 zone.state = false;
 
                             elseif (not zone.state and dist <= zone.size and allowed) then
 
                                 zone.state = true;
-                                TriggerEvent(eEvents.Start, resourceName, zoneId);
-
-                            elseif (zone.state and not allowed) then
-                                
-                                TriggerEvent(eEvents.Stop, resourceName, zoneId);
-                                zone.state = false;
+                                TriggerEvent(eEvents.ZoneLib.Start, resourceName, zoneId);
 
                             end
 

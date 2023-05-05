@@ -13,8 +13,6 @@
 ----
 --]]
 
-STORED_ZONES = {};
-
 ---@class Zone: BaseObject
 ---@field public context string
 ---@field public id string
@@ -52,7 +50,7 @@ function Zone:Constructor()
     self.events = EventEmitter();
 
     STORED_ZONES[self.id] = self;
-    TriggerEvent(eEvents.Add, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    TriggerEvent(eEvents.ZoneLib.Add, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
 
 end
 
@@ -150,14 +148,14 @@ function Zone:SetPosition(position)
     for i = 1, #self.radius do
         self.radius[i].position = position;
     end
-    TriggerEvent(eEvents.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    TriggerEvent(eEvents.ZoneLib.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
     return self;
 end
 
 ---@param size number
 function Zone:SetSize(size)
     self.size = size;
-    TriggerEvent(eEvents.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    TriggerEvent(eEvents.ZoneLib.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
     return self;
 end
 
@@ -166,7 +164,7 @@ end
 function Zone:SetJob(job, grade)
     self.job = job;
     self.job_grade = grade;
-    TriggerEvent(eEvents.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    TriggerEvent(eEvents.ZoneLib.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
     return self;
 end
 
@@ -175,7 +173,7 @@ end
 function Zone:SetJob2(job2, grade)
     self.job2 = job2;
     self.job2_grade = grade;
-    TriggerEvent(eEvents.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    TriggerEvent(eEvents.ZoneLib.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
     return self;
 end
 

@@ -13,6 +13,7 @@
 ----
 --]]
 
+STORED_ZONES = {};
 local IS_LIB = jZoneLib ~= nil;
 local GetInvokingResource = GetInvokingResource;
 
@@ -25,16 +26,17 @@ if (IS_LIB) then
     ---@param job_grade number
     ---@param job2 string
     ---@param job2_grade number
-    AddEventHandler(eEvents.Add, function(zoneId, position, size, job, job_grade, job2, job2_grade)
+    AddEventHandler(eEvents.ZoneLib.Add, function(zoneId, position, size, job, job_grade, job2, job2_grade)
 
         local resource = GetInvokingResource();
+        
         if (IS_LIB) then
             jZoneLib.AddZone(resource, zoneId, position, size, job, job_grade, job2, job2_grade);
         end
 
     end);
 
-    AddEventHandler(eEvents.Purge, function()
+    AddEventHandler(eEvents.ZoneLib.Purge, function()
 
         local resource = GetInvokingResource();
 
@@ -44,7 +46,7 @@ if (IS_LIB) then
 
     end);
 
-    AddEventHandler(eEvents.Update, function(zoneId, position, size, job, job_grade, job2, job2_grade)
+    AddEventHandler(eEvents.ZoneLib.Update, function(zoneId, position, size, job, job_grade, job2, job2_grade)
 
         local resource = GetInvokingResource();
 
@@ -59,7 +61,7 @@ end
 
 ---@param resourceName string
 ---@param zoneId string
-AddEventHandler(eEvents.Start, function(resourceName, zoneId)
+AddEventHandler(eEvents.ZoneLib.Start, function(resourceName, zoneId)
 
     local resource = GetInvokingResource();
 
@@ -68,6 +70,7 @@ AddEventHandler(eEvents.Start, function(resourceName, zoneId)
     else
 
         if (not ENV or resource ~= ENV.lib_name) then return; end -- PREVENT CHEATER CALLING THIS EVENT
+        if (resourceName ~= ENV.name) then return; end
 
         ---@type Zone
         local zone = STORED_ZONES[zoneId];
@@ -86,19 +89,20 @@ end);
 
 ---@param resourceName string
 ---@param zoneId string
-AddEventHandler(eEvents.Stop, function(resourceName, zoneId)
+AddEventHandler(eEvents.ZoneLib.Stop, function(resourceName, zoneId)
 
     local resource = GetInvokingResource();
 
     if (IS_LIB) then
-        jZoneLib.StopZone(resource, zoneId);
+        jZoneLib.StopZone(resourceName, zoneId);
     else
         
         if (not ENV or resource ~= ENV.lib_name) then return; end -- PREVENT CHEATER CALLING THIS EVENT
+        if (resourceName ~= ENV.name) then return; end
 
         ---@type Zone
         local zone = STORED_ZONES[zoneId];
-
+        
         if (zone) then
 
             if (zone.started) then
@@ -116,6 +120,6 @@ AddEventHandler("onResourceStop", function(resourceName)
     if (IS_LIB) then return; end
     if (resourceName ~= ENV.name) then return; end
 
-    TriggerEvent(eEvents.Purge);
+    TriggerEvent(eEvents.ZoneLib.Purge);
 
 end);
