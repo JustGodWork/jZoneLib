@@ -62,25 +62,33 @@ function Zone:Listen()
     end
 
     for i = 1, #self.radius do
-        if (self.radius[i]:IsIn()) then
 
-            if (not self.radius[i].entered) then
-                self.radius[i].entered = true;
-                self.radius[i].events:Trigger('enter', self.radius[i]);
+        if (Value.IsInstanceOf(self.radius[i], 'Radius')) then
+
+            if (self.radius[i]:IsIn()) then
+
+                if (not self.radius[i].entered) then
+                    self.radius[i].entered = true;
+                    self.radius[i].events:Trigger('enter', self.radius[i]);
+                end
+
+                if (Value.IsValid(self.radius[i].action, Value.Types.Function)) then
+                    self.radius[i].action(self.radius[i]);
+                end
+
+            else
+
+                if (self.radius[i].entered) then
+
+                    self.radius[i].entered = false;
+                    self.radius[i].events:Trigger('leave', self.radius[i]);
+
+                end
+                
             end
 
-            if (Value.IsValid(self.radius[i].action, Value.Types.Function)) then
-                self.radius[i].action(self.radius[i]);
-            end
-
-        else
-            if (self.radius[i].entered) then
-
-                self.radius[i].entered = false;
-                self.radius[i].events:Trigger('leave', self.radius[i]);
-
-            end
         end
+
     end
 
 end
