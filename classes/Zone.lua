@@ -22,6 +22,10 @@ STORED_ZONES = {};
 ---@field public size number
 ---@field public markers Marker[]
 ---@field public radius Radius[]
+---@field public job string
+---@field public job_grade number
+---@field public job2 string
+---@field public job2_grade number
 ---@field public started boolean
 ---@field public action fun(self: Zone)
 ---@field public events EventEmitter
@@ -38,13 +42,17 @@ function Zone:Constructor()
     self.size = 10;
     self.markers = {};
     self.radius = {};
+    self.job = nil;
+    self.job_grade = nil;
+    self.job2 = nil;
+    self.job2_grade = nil;
     self.started = false;
     self.action = nil;
 
     self.events = EventEmitter();
 
     STORED_ZONES[self.id] = self;
-    TriggerEvent(eEvents.Add, self.id, self.position, self.size);
+    TriggerEvent(eEvents.Add, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
 
 end
 
@@ -142,23 +150,57 @@ function Zone:SetPosition(position)
     for i = 1, #self.radius do
         self.radius[i].position = position;
     end
-    TriggerEvent(eEvents.Update, self.id, self.position, self.size);
+    TriggerEvent(eEvents.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
     return self;
 end
 
 ---@param size number
 function Zone:SetSize(size)
     self.size = size;
-    TriggerEvent(eEvents.Update, self.id, self.position, self.size);
+    TriggerEvent(eEvents.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
     return self;
 end
 
+---@param job string
+---@param grade number
+function Zone:SetJob(job, grade)
+    self.job = job;
+    self.job_grade = grade;
+    TriggerEvent(eEvents.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    return self;
+end
+
+---@param job2 string
+---@param grade number
+function Zone:SetJob2(job2, grade)
+    self.job2 = job2;
+    self.job2_grade = grade;
+    TriggerEvent(eEvents.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    return self;
+end
+
+---@param id number
+---@return Radius
+function Zone:GetRadius(id)
+    return self.radius[id];
+end
+
+---@return Radius
 function Zone:AddRadius()
     local id = #self.radius + 1;
     self.radius[id] = Radius(id, self.position);
     return self.radius[id];
 end
 
+---@param radius Radius
+function Zone:RemoveRadius(radius)
+    if (self.radius[radius.id]) then
+        self.radius[radius.id] = nil;
+    end
+    return self;
+end
+
+---@param id number
 ---@return Marker
 function Zone:GetMarker(id)
     return self.markers[id];

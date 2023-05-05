@@ -14,6 +14,7 @@
 --]]
 
 ---@class EventEmitter: BaseObject
+---@field public events table<string, table<number, fun(...: vararg)>>
 EventEmitter = Class.new 'EventEmitter';
 
 function EventEmitter:Constructor()

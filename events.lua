@@ -13,27 +13,75 @@
 ----
 --]]
 
--- todo : Add Position change event
-
 local IS_LIB = jZoneLib ~= nil;
 local GetInvokingResource = GetInvokingResource;
+local GetResourceState = GetResourceState;
+local esx_name = "es_extended";
 
 if (IS_LIB) then
+
+    if (jZoneLib.ESX) then
+
+        ESX = exports[esx_name]:getSharedObject();
+
+        AddEventHandler("onResourceStart", function(resourceName) -- HOT RELOAD SUPPORT
+
+            if (resourceName == GetCurrentResourceName()) then
+
+                if (type(ESX.GetPlayerData()) == "table") then
+                    ESX.PlayerData = ESX.GetPlayerData();
+                end
+
+            end
+
+        end);
+
+        RegisterNetEvent("esx:playerLoaded", function(xPlayer)
+
+            local resource = GetInvokingResource();
+            if (resource ~= nil) then return; end; -- PREVENT CHEATER CALLING THIS EVENT
+
+            ESX.PlayerData = xPlayer;
+
+        end);
+        
+        RegisterNetEvent("esx:setJob", function(job)
+
+            local resource = GetInvokingResource();
+            if (resource ~= nil) then return; end; -- PREVENT CHEATER CALLING THIS EVENT
+
+            ESX.PlayerData.job = job;
+
+        end);
+    
+        RegisterNetEvent("esx:setJob2", function(job2)
+
+            local resource = GetInvokingResource();
+            if (resource ~= nil) then return; end; -- PREVENT CHEATER CALLING THIS EVENT
+
+            ESX.PlayerData.job2 = job2;
+
+        end);
+
+    end
 
     ---@param zoneId string
     ---@param position vector3
     ---@param size number
-    AddEventHandler(eEvents.Add, function(zoneId, position, size)
+    ---@param job string
+    ---@param job_grade number
+    ---@param job2 string
+    ---@param job2_grade number
+    AddEventHandler(eEvents.Add, function(zoneId, position, size, job, job_grade, job2, job2_grade)
 
         local resource = GetInvokingResource();
         if (IS_LIB) then
-            jZoneLib.AddZone(resource, zoneId, position, size);
+            jZoneLib.AddZone(resource, zoneId, position, size, job, job_grade, job2, job2_grade);
         end
 
     end);
 
-    ---@param resourceName string
-    AddEventHandler(eEvents.Purge, function(resourceName)
+    AddEventHandler(eEvents.Purge, function()
 
         local resource = GetInvokingResource();
 
@@ -43,11 +91,12 @@ if (IS_LIB) then
 
     end);
 
-    AddEventHandler(eEvents.Update, function(zoneId, position, size)
+    AddEventHandler(eEvents.Update, function(zoneId, position, size, job, job_grade, job2, job2_grade)
 
         local resource = GetInvokingResource();
+
         if (IS_LIB) then
-            jZoneLib.UpdateZone(resource, zoneId, position, size);
+            jZoneLib.UpdateZone(resource, zoneId, position, size, job, job_grade, job2, job2_grade);
         end
 
     end);
@@ -59,14 +108,13 @@ end
 ---@param zoneId string
 AddEventHandler(eEvents.Start, function(resourceName, zoneId)
 
-    --- todo : Add check if resource triggering is lib or not
     local resource = GetInvokingResource();
 
     if (IS_LIB) then
         jZoneLib.StartZone(resourceName, zoneId);
     else
 
-        if (resourceName ~= ENV.name) then return; end
+        if (not ENV or resource ~= ENV.lib_name) then return; end -- PREVENT CHEATER CALLING THIS EVENT
 
         ---@type Zone
         local zone = STORED_ZONES[zoneId];
@@ -87,14 +135,13 @@ end);
 ---@param zoneId string
 AddEventHandler(eEvents.Stop, function(resourceName, zoneId)
 
-    --- todo : Add check if resource triggering is lib or not
     local resource = GetInvokingResource();
 
     if (IS_LIB) then
         jZoneLib.StopZone(resource, zoneId);
     else
         
-        if (resourceName ~= ENV.name) then return; end
+        if (not ENV or resource ~= ENV.lib_name) then return; end -- PREVENT CHEATER CALLING THIS EVENT
 
         ---@type Zone
         local zone = STORED_ZONES[zoneId];
