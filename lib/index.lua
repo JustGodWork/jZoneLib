@@ -50,8 +50,8 @@ end
 ---@param resourceName string
 ---@param zoneId string
 function jZoneLib.StartZone(resourceName, zoneId)
-    if (type(zones[resourceName]) == "table") then
-        if (type(zones[resourceName][zoneId]) == "table") then
+    if (Value.IsValid(zones[resourceName], Value.Types.Table)) then
+        if (Value.IsValid(zones[resourceName][zoneId], Value.Types.Table)) then
 
             zones[resourceName][zoneId].state = true;
 
@@ -67,8 +67,8 @@ end
 ---@param zoneId string
 function jZoneLib.StopZone(resourceName, zoneId)
 
-    if (type(zones[resourceName]) == "table") then
-        if (type(zones[resourceName][zoneId]) == "table") then
+    if (Value.IsValid(zones[resourceName], Value.Types.Table)) then
+        if (Value.IsValid(zones[resourceName][zoneId], Value.Types.Table)) then
             zones[resourceName][zoneId].state = false;
 
             if (DEBUG) then
@@ -89,8 +89,8 @@ end
 ---@param job2 string
 ---@param job2_grade number
 function jZoneLib.UpdateZone(resourceName, zoneId, position, size, job, job_grade, job2, job2_grade)
-    if (type(zones[resourceName]) == "table") then
-        if (type(zones[resourceName][zoneId]) == "table") then
+    if (Value.IsValid(zones[resourceName], Value.Types.Table)) then
+        if (Value.IsValid(zones[resourceName][zoneId], Value.Types.Table)) then
 
             zones[resourceName][zoneId].position = Vector3(position.x, position.y, position.z);
             zones[resourceName][zoneId].size = size;
@@ -119,7 +119,7 @@ end
 
 ---@return boolean
 local function IsESXReady()
-    return ENV.ESX and type(ESX.PlayerData) == "table";
+    return ENV.ESX and Value.IsValid(ESX.PlayerData, Value.Types.Table);
 end
 
 ---@param job string
@@ -136,7 +136,7 @@ local function HasJob(jobType, job, grade)
 
     local player = ESX.PlayerData;
 
-    if (type(player[jobType]) ~= "table") then return false; end
+    if (not Value.IsValid(player[jobType], Value.Types.Table)) then return false; end
     if (grade == nil) then return player[jobType].name == job; end
     return (player[jobType].name == job) and (player[jobType].grade >= grade);
 
@@ -161,11 +161,11 @@ CreateThread(function()
 
         for resourceName, resourceZones in pairs(zones) do
 
-            if (type(resourceZones) == "table") then
+            if (Value.IsValid(resourceZones, Value.Types.Table)) then
 
                 for zoneId, zone in pairs(resourceZones) do
 
-                    if (type(zone) == "table") then
+                    if (Value.IsValid(zone, Value.Types.Table)) then
 
                         local dist = zone.position:Distance(position);
 

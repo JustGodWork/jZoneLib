@@ -57,7 +57,7 @@ end
 ---@private
 function Zone:Listen()
 
-    if (type(self.action) == "function") then
+    if (Value.IsValid(self.action, Value.Types.Function)) then
         self.action(self);
     end
 
@@ -69,7 +69,7 @@ function Zone:Listen()
                 self.radius[i].events:Trigger('enter', self.radius[i]);
             end
 
-            if (type(self.radius[i].action) == "function") then
+            if (Value.IsValid(self.radius[i].action, Value.Types.Function)) then
                 self.radius[i].action(self.radius[i]);
             end
 
@@ -204,10 +204,12 @@ function Zone:GetMarker(id)
     return self.markers[id];
 end
 
+---@param marker? Marker | MarkerCircle
 ---@return Marker
-function Zone:AddMarker()
+function Zone:AddMarker(marker)
     local id = #self.markers + 1;
-    self.markers[id] = Marker(id);
+    self.markers[id] = Value.IsInstance(marker) and marker or Marker();
+    self.markers[id].id = id;
     return self.markers[id];
 end
 

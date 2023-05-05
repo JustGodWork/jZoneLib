@@ -4,7 +4,7 @@
 ----Author: JustGod
 ----Made with ❤
 ----
-----File: [tesl]
+----File: [example]
 ----
 ----Copyright (c) 2023 JustGodWork, All Rights Reserved.
 ----This file is part of JustGodWork project.
@@ -25,15 +25,15 @@ local zone = Zone()
     :SetSize(20);
 
 local marker1 = zone:AddMarker();
-marker1:SetType(eMarkerType.ReplayIcon)
-    :SetPosition(current)
-    :SetDirection(Direction(0.0, 0.0, 0.0))
-    :SetScale(Scale(1, 1, 1))
-    :SetRotation(Rotation(0.0, 0.0, 0.0))
-    :SetColor(Color(0, 0, 0, 255))
-    :SetRotate(true)
-    :SetBobUpAndDown(false)
-    :SetFaceCamera(false);
+    marker1:SetType(eMarkerType.ReplayIcon)
+        :SetPosition(current)
+        :SetDirection(Direction())
+        :SetScale(Scale())
+        :SetRotation(Rotation())
+        :SetColor(Color(0, 0, 0, 255))
+        :SetRotate(true)
+        :SetBobUpAndDown(true)
+        :SetFaceCamera(false);
 
 zone:SetAction(function() --You can register only one action for a zone
     marker1:SetPosition(current);
