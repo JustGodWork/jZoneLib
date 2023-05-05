@@ -16,11 +16,10 @@
 local zones = {};
 
 jZoneLib = {};
-jZoneLib.ESX = GetResourceState("es_extended") == "started";
 
 ---@param resourceName string
 ---@param zoneId string
----@param position vector3
+---@param position Vector3
 ---@param size number
 ---@param job string
 ---@param job_grade number
@@ -32,7 +31,7 @@ function jZoneLib.AddZone(resourceName, zoneId, position, size, job, job_grade, 
     zones[resourceName][zoneId] = {
 
         state = false,
-        position = position,
+        position = Vector3(position.x, position.y, position.z),
         size = size,
         job = job,
         job_grade = job_grade,
@@ -67,7 +66,7 @@ end
 
 ---@param resourceName string
 ---@param zoneId string
----@param position vector3
+---@param position Vector3
 ---@param size number
 ---@param job string
 ---@param job_grade number
@@ -76,7 +75,7 @@ end
 function jZoneLib.UpdateZone(resourceName, zoneId, position, size, job, job_grade, job2, job2_grade)
     if (type(zones[resourceName]) == "table") then
         if (type(zones[resourceName][zoneId]) == "table") then
-            zones[resourceName][zoneId].position = position;
+            zones[resourceName][zoneId].position = Vector3(position.x, position.y, position.z);
             zones[resourceName][zoneId].size = size;
             zones[resourceName][zoneId].job = job;
             zones[resourceName][zoneId].job_grade = job_grade;
@@ -93,7 +92,7 @@ end
 
 ---@return boolean
 local function IsESXReady()
-    return jZoneLib.ESX and type(ESX.PlayerData) == "table";
+    return ENV.ESX and type(ESX.PlayerData) == "table";
 end
 
 ---@param job string
@@ -141,7 +140,7 @@ CreateThread(function()
 
                     if (type(zone) == "table") then
 
-                        local dist = #(position - zone.position);
+                        local dist = zone.position:Distance(position);
 
                         if (not jZoneLib.ESX) then
 

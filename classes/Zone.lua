@@ -18,7 +18,7 @@ STORED_ZONES = {};
 ---@class Zone: BaseObject
 ---@field public context string
 ---@field public id string
----@field public position vector3
+---@field public position Vector3
 ---@field public size number
 ---@field public markers Marker[]
 ---@field public radius Radius[]
@@ -38,7 +38,7 @@ function Zone:Constructor()
     self.context = ENV.name;
     self.id = uuid();
 
-    self.position = vector3(0, 0, 0);
+    self.position = Vector3(0, 0, 0);
     self.size = 10;
     self.markers = {};
     self.radius = {};
@@ -144,7 +144,7 @@ function Zone:OnLeave(leave)
     return self;
 end
 
----@param position vector3
+---@param position Vector3
 function Zone:SetPosition(position)
     self.position = position;
     for i = 1, #self.radius do

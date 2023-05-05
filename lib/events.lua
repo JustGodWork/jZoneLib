@@ -15,58 +15,11 @@
 
 local IS_LIB = jZoneLib ~= nil;
 local GetInvokingResource = GetInvokingResource;
-local GetResourceState = GetResourceState;
-local esx_name = "es_extended";
 
 if (IS_LIB) then
 
-    if (jZoneLib.ESX) then
-
-        ESX = exports[esx_name]:getSharedObject();
-
-        AddEventHandler("onResourceStart", function(resourceName) -- HOT RELOAD SUPPORT
-
-            if (resourceName == GetCurrentResourceName()) then
-
-                if (type(ESX.GetPlayerData()) == "table") then
-                    ESX.PlayerData = ESX.GetPlayerData();
-                end
-
-            end
-
-        end);
-
-        RegisterNetEvent("esx:playerLoaded", function(xPlayer)
-
-            local resource = GetInvokingResource();
-            if (resource ~= nil) then return; end; -- PREVENT CHEATER CALLING THIS EVENT
-
-            ESX.PlayerData = xPlayer;
-
-        end);
-        
-        RegisterNetEvent("esx:setJob", function(job)
-
-            local resource = GetInvokingResource();
-            if (resource ~= nil) then return; end; -- PREVENT CHEATER CALLING THIS EVENT
-
-            ESX.PlayerData.job = job;
-
-        end);
-    
-        RegisterNetEvent("esx:setJob2", function(job2)
-
-            local resource = GetInvokingResource();
-            if (resource ~= nil) then return; end; -- PREVENT CHEATER CALLING THIS EVENT
-
-            ESX.PlayerData.job2 = job2;
-
-        end);
-
-    end
-
     ---@param zoneId string
-    ---@param position vector3
+    ---@param position Vector3
     ---@param size number
     ---@param job string
     ---@param job_grade number

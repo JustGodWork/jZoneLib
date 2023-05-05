@@ -15,12 +15,12 @@
 
 ---@class Radius: BaseObject
 ---@field public id number
----@field public position vector3
+---@field public position Vector3
 ---@field public size number
 ---@field private entered boolean
 ---@field private action fun(self: Radius)
 ---@field private events EventEmitter
----@overload fun(position: vector3): Radius
+---@overload fun(position: Vector3): Radius
 Radius = Class.new 'Radius';
 
 ---@private
@@ -40,7 +40,7 @@ end
 function Radius:IsIn()
     local ped = PlayerPedId();
     local position = GetEntityCoords(ped);
-    local distance = #(position - self.position);
+    local distance = self.position:Distance(position);
     return distance <= self.size;
 end
 
