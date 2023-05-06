@@ -79,3 +79,17 @@ local radius1 = zone:AddRadius()
         end);
 
     end);
+
+RegisterCommand("zone_force_hide", function()
+    zone:SetForceHide(not zone.force_hide);
+end);
+
+RegisterCommand("zone_job", function()
+    
+    if (zone.job == "police") then
+        zone:SetJob(nil, nil);
+    else
+        zone:SetJob("police", 2);
+    end
+
+end);
