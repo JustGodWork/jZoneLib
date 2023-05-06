@@ -18,7 +18,8 @@ game 'gta5';
 
 author 'JustGod';
 
-shared_script '@es_extended/imports.lua';
 shared_script '@jClassLib/imports.lua';
 shared_script '@jZoneLib/imports.lua';
 client_script 'example.lua';
+
+dependency 'jZoneLib';

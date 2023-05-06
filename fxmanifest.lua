@@ -28,7 +28,6 @@ files {
 
     'classes/*.lua',
     'lib/*.lua',
-    'lib/events.lua',
     'imports.lua'
     
 };

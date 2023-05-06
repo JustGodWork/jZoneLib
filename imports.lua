@@ -14,22 +14,22 @@
 --]]
 
 ENV.name = GetCurrentResourceName();
-ENV.lib_name = "jZoneLib";
+local lib = "jZoneLib";
 
-local state = GetResourceState(ENV.lib_name);
+local state = GetResourceState(lib);
 
 if (state == "missing") then
-    return error(('\n^1Error: %s is missing^0'):format(ENV.lib_name), 0);
+    return error(('\n^1Error: %s is missing^0'):format(lib), 0);
 end
 
 if (state ~= "started") then
-    return error(('\n^1Error: %s must be started before ^5%s^0'):format(ENV.lib_name, ENV.name), 0);
+    return error(('\n^1Error: %s must be started before ^5%s^0'):format(lib, ENV.name), 0);
 end
 
 if (not ENV.IS_SERVER) then
 
-    ENV.require('lib/events.lua', ENV.lib_name);
-    ENV.require('classes/Radius.lua', ENV.lib_name);
-    ENV.require('classes/Zone.lua', ENV.lib_name);
+    ENV.require('lib/events.lua', lib);
+    ENV.require('classes/Radius.lua', lib);
+    ENV.require('classes/Zone.lua', lib);
 
 end

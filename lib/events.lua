@@ -13,6 +13,7 @@
 ----
 --]]
 
+local lib = "jZoneLib";
 STORED_ZONES = {};
 local IS_LIB = jZoneLib ~= nil;
 local GetInvokingResource = GetInvokingResource;
@@ -58,7 +59,6 @@ if (IS_LIB) then
 
 end
 
-
 ---@param resourceName string
 ---@param zoneId string
 AddEventHandler(eEvents.ZoneLib.Start, function(resourceName, zoneId)
@@ -69,7 +69,7 @@ AddEventHandler(eEvents.ZoneLib.Start, function(resourceName, zoneId)
         jZoneLib.StartZone(resourceName, zoneId);
     else
 
-        if (not ENV or resource ~= ENV.lib_name) then return; end -- PREVENT CHEATER CALLING THIS EVENT
+        if (not ENV or resource ~= lib) then return; end -- PREVENT CHEATER CALLING THIS EVENT
         if (resourceName ~= ENV.name) then return; end
 
         ---@type Zone
@@ -97,7 +97,7 @@ AddEventHandler(eEvents.ZoneLib.Stop, function(resourceName, zoneId)
         jZoneLib.StopZone(resourceName, zoneId);
     else
         
-        if (not ENV or resource ~= ENV.lib_name) then return; end -- PREVENT CHEATER CALLING THIS EVENT
+        if (not ENV or resource ~= lib) then return; end -- PREVENT CHEATER CALLING THIS EVENT
         if (resourceName ~= ENV.name) then return; end
 
         ---@type Zone
