@@ -46,11 +46,12 @@ function Zone:Constructor()
     self.job2_grade = nil;
     self.started = false;
     self.action = nil;
+    self.force_hide = false
 
     self.events = EventEmitter();
 
     STORED_ZONES[self.id] = self;
-    TriggerEvent(eEvents.ZoneLib.Add, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    TriggerEvent(eEvents.ZoneLib.Add, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade, self.force_hide);
 
 end
 
@@ -91,6 +92,23 @@ function Zone:Listen()
 
     end
 
+end
+
+---@param key? string
+---@param value? any
+function Zone:SendUpdate(key, value)
+    if (Value.IsString(key)) then
+        TriggerEvent(eEvents.ZoneLib.UpdateSingle, self.id, key, value);
+    else
+        TriggerEvent(eEvents.ZoneLib.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade, self.force_hide);
+    end
+end
+
+---@param force_hide boolean
+function Zone:SetForceHide(force_hide)
+    self.force_hide = force_hide;
+    self:SendUpdate("force_hide", force_hide);
+    return self;
 end
 
 function Zone:Start()
@@ -156,14 +174,14 @@ function Zone:SetPosition(position)
     for i = 1, #self.radius do
         self.radius[i].position = position;
     end
-    TriggerEvent(eEvents.ZoneLib.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    self:SendUpdate("position", position);
     return self;
 end
 
 ---@param size number
 function Zone:SetSize(size)
     self.size = size;
-    TriggerEvent(eEvents.ZoneLib.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    self:SendUpdate("size", size);
     return self;
 end
 
@@ -172,7 +190,8 @@ end
 function Zone:SetJob(job, grade)
     self.job = job;
     self.job_grade = grade;
-    TriggerEvent(eEvents.ZoneLib.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    self:SendUpdate("job", job);
+    self:SendUpdate("job_grade", grade);
     return self;
 end
 
@@ -181,7 +200,8 @@ end
 function Zone:SetJob2(job2, grade)
     self.job2 = job2;
     self.job2_grade = grade;
-    TriggerEvent(eEvents.ZoneLib.Update, self.id, self.position, self.size, self.job, self.job_grade, self.job2, self.job2_grade);
+    self:SendUpdate("job2", job2);
+    self:SendUpdate("job2_grade", grade);
     return self;
 end
 

@@ -26,7 +26,8 @@ jZoneLib = {};
 ---@param job_grade number
 ---@param job2 string
 ---@param job2_grade number
-function jZoneLib.AddZone(resourceName, zoneId, position, size, job, job_grade, job2, job2_grade)
+---@param force_hide boolean
+function jZoneLib.AddZone(resourceName, zoneId, position, size, job, job_grade, job2, job2_grade, force_hide)
 
     zones[resourceName] = zones[resourceName] or {};
     zones[resourceName][zoneId] = {
@@ -37,7 +38,8 @@ function jZoneLib.AddZone(resourceName, zoneId, position, size, job, job_grade, 
         job = job,
         job_grade = job_grade,
         job2 = job2,
-        job2_grade = job2_grade
+        job2_grade = job2_grade,
+        force_hide = force_hide
 
     };
 
@@ -88,7 +90,8 @@ end
 ---@param job_grade number
 ---@param job2 string
 ---@param job2_grade number
-function jZoneLib.UpdateZone(resourceName, zoneId, position, size, job, job_grade, job2, job2_grade)
+---@param force_hide boolean
+function jZoneLib.UpdateZone(resourceName, zoneId, position, size, job, job_grade, job2, job2_grade, force_hide)
     if (Value.IsValid(zones[resourceName], Value.Types.Table)) then
         if (Value.IsValid(zones[resourceName][zoneId], Value.Types.Table)) then
 
@@ -98,9 +101,32 @@ function jZoneLib.UpdateZone(resourceName, zoneId, position, size, job, job_grad
             zones[resourceName][zoneId].job_grade = job_grade;
             zones[resourceName][zoneId].job2 = job2;
             zones[resourceName][zoneId].job2_grade = job2_grade;
+            zones[resourceName][zoneId].force_hide = force_hide;
 
             if (DEBUG) then
                 console.debug("^7(^3jZoneLib^7) ^0=> Updated zone: ^1" .. zoneId .. "^0 from resource: ^1" .. resourceName .. "^0");
+            end
+
+        end
+    end
+end
+
+---@param resourceName string
+---@param zoneId string
+---@param key string
+---@param value any
+function jZoneLib.SetValue(resourceName, zoneId, key, value)
+    if (Value.IsValid(zones[resourceName], Value.Types.Table)) then
+        if (Value.IsValid(zones[resourceName][zoneId], Value.Types.Table)) then
+
+            if (key == "position") then
+                zones[resourceName][zoneId][key] = Vector3(value.x, value.y, value.z);
+            else
+                zones[resourceName][zoneId][key] = value;
+            end
+
+            if (DEBUG) then
+                console.debug("^7(^3jZoneLib^7) ^0=> Updated zone: ^1" .. zoneId .. "^0 ^7( ^0key: ^1" .. key .. " ^0value: ^1" .. tostring(value) .. "^7)^0 from resource: ^1" .. resourceName .. "^0");
             end
 
         end
@@ -171,12 +197,12 @@ CreateThread(function()
 
                         if (not ENV.ESX) then
 
-                            if (zone.state and dist > zone.size) then
+                            if ( (zone.state and dist > zone.size) or (zone.state and zone.force_hide) ) then
 
                                 TriggerEvent(eEvents.ZoneLib.Stop, resourceName, zoneId);
                                 zone.state = false;
 
-                            elseif (not zone.state and dist <= zone.size) then
+                            elseif (not zone.state and dist <= zone.size and not zone.force_hide) then
 
                                 zone.state = true;
                                 TriggerEvent(eEvents.ZoneLib.Start, resourceName, zoneId);
@@ -187,12 +213,12 @@ CreateThread(function()
 
                             local allowed = PlayerAllowed(zone.job, zone.job_grade, zone.job2, zone.job2_grade);
 
-                            if (zone.state and (dist > zone.size or not allowed)) then
+                            if ( (zone.state and dist > zone.size) or (zone.state and not allowed) or (zone.state and zone.force_hide) ) then
 
                                 TriggerEvent(eEvents.ZoneLib.Stop, resourceName, zoneId);
                                 zone.state = false;
 
-                            elseif (not zone.state and dist <= zone.size and allowed) then
+                            elseif (not zone.state and dist <= zone.size and allowed and not zone.force_hide) then
 
                                 zone.state = true;
                                 TriggerEvent(eEvents.ZoneLib.Start, resourceName, zoneId);

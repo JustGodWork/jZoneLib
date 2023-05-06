@@ -27,12 +27,12 @@ if (IS_LIB) then
     ---@param job_grade number
     ---@param job2 string
     ---@param job2_grade number
-    AddEventHandler(eEvents.ZoneLib.Add, function(zoneId, position, size, job, job_grade, job2, job2_grade)
+    AddEventHandler(eEvents.ZoneLib.Add, function(zoneId, position, size, job, job_grade, job2, job2_grade, force_hide)
 
         local resource = GetInvokingResource();
         
         if (IS_LIB) then
-            jZoneLib.AddZone(resource, zoneId, position, size, job, job_grade, job2, job2_grade);
+            jZoneLib.AddZone(resource, zoneId, position, size, job, job_grade, job2, job2_grade, force_hide);
         end
 
     end);
@@ -47,12 +47,22 @@ if (IS_LIB) then
 
     end);
 
-    AddEventHandler(eEvents.ZoneLib.Update, function(zoneId, position, size, job, job_grade, job2, job2_grade)
+    AddEventHandler(eEvents.ZoneLib.Update, function(zoneId, position, size, job, job_grade, job2, job2_grade, force_hide)
 
         local resource = GetInvokingResource();
 
         if (IS_LIB) then
-            jZoneLib.UpdateZone(resource, zoneId, position, size, job, job_grade, job2, job2_grade);
+            jZoneLib.UpdateZone(resource, zoneId, position, size, job, job_grade, job2, job2_grade, force_hide);
+        end
+
+    end);
+
+    AddEventHandler(eEvents.ZoneLib.UpdateSingle, function(zoneId, key, value)
+
+        local resource = GetInvokingResource();
+
+        if (IS_LIB) then
+            jZoneLib.SetValue(resource, zoneId, key, value);
         end
 
     end);
