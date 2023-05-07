@@ -20,15 +20,15 @@ author 'JustGod';
 description 'jZoneLib - A simple library for FiveM to create zones';
 version '1.0.0';
 
-shared_script '@jClassLib/imports.lua';
+shared_script '@jClassLib/init.lua';
 client_script 'lib/index.lua';
 client_script 'lib/events.lua';
 
 files {
 
-    'classes/*.lua',
-    'lib/*.lua',
-    'imports.lua'
+    'classes/**/*.lua',
+    'lib/**/*.lua',
+    'init.lua'
     
 };
 

@@ -34,7 +34,7 @@ Zone = Class.new 'Zone';
 function Zone:Constructor()
 
     self.context = ENV.name;
-    self.id = uuid();
+    self.id = jCLib.uuid();
 
     self.position = Vector3(0, 0, 0);
     self.size = 10;

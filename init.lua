@@ -18,12 +18,21 @@ local lib = "jZoneLib";
 
 local state = GetResourceState(lib);
 
+local Errors = {
+
+    resource_missing = "^1Error: %s is missing^0",
+    resource_not_started = "^1Error: %s must be started before ^5%s^0"
+
+};
+
+local state = GetResourceState(lib);
+
 if (state == "missing") then
-    return error(('\n^1Error: %s is missing^0'):format(lib), 0);
+    return error((Errors.resource_missing):format(lib), 3);
 end
 
 if (state ~= "started") then
-    return error(('\n^1Error: %s must be started before ^5%s^0'):format(lib, ENV.name), 0);
+    return error((Errors.resource_not_started):format(lib, ENV.name), 3);
 end
 
 if (not ENV.IS_SERVER) then
